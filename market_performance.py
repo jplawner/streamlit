@@ -13,6 +13,7 @@ import pandas as pd
 from datetime import datetime, timedelta, date
 import plotly.graph_objects as go
 from pathlib import Path
+from pandas_datareader import data as web
 
 TICKERS = [
     "^GSPC",   # S&P 500
@@ -165,7 +166,9 @@ def get_latest_cpi_on_or_before(date, cpi_series=CPI):
     Returns the CPI value (float) for the latest date on or before the given date.
     Assumes cpi_series is a pandas Series (not DataFrame) indexed by date.
     """
-    return float(cpi_series.loc[cpi_series.index <= date].iloc[-1])
+    return  cpi_series.loc[cpi_series.index <= date].iloc[-1].item()
+
+    #return float(cpi_series.loc[cpi_series.index <= date].iloc[-1])
 
 def get_inflation_adjusted_data(prices_or_df, start):
     """
