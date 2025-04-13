@@ -102,7 +102,7 @@ PERIOD_DURATIONS = {
     "Black Thursday (10/24/1929)": 100,
     "Black Monday (10/19/1987)": 100,
 
-    "Peak of Dot Com Bubble (3/10/2020)": 100,
+    "Peak of Dot Com Bubble (3/10/2000)": 100,
 
     "Subprime Cracks Emerge (2/1/2007)":100,
     "Liquidity Freeze (8/9/2007)":100,
