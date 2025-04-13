@@ -5,6 +5,8 @@ USAGE: On the command line,
 This launches a browser app
 
 Based on Vince L.'s app https://s-and-p-performance.streamlit.app/
+
+See also https://www.cnn.com/interactive/2019/business/stock-market-by-president/index.html
 """
 
 import streamlit as st
@@ -22,6 +24,9 @@ TICKERS = [
     "^RUT",    # Russell 2000
     "^NYA",    # NYSE Composite
     "^VIX",    # Volatility Index (not a price index, but useful)
+
+    "CPI (Inflation)",
+
     "^STOXX50E",  # Euro Stoxx 50 (Europe)
     "^FTSE",   # FTSE 100 (UK)
     "^N225",   # Nikkei 225 (Japan)
@@ -246,10 +251,37 @@ def do_st_plot():
     )
    
     @st.cache_data
-    def get_selected_ticker_data(ticker):
+    def get_selected_ticker_data_orig(ticker):
+        if ticker == "CPI (Inflation)":
+            return CPI #### ONLY MODIFY THIS
+        """
+        """
         return yf.download(ticker, auto_adjust=True)["Close"]
+    
 
-   
+    def get_selected_ticker_data(ticker):
+        """
+        The result will allow filtering like this:
+        data = result.loc[(ticker_data.index >= start) & (ticker_data.index <= end)].copy()
+        and values like this:
+        computed_change = data[ticker]/data[ticker].iloc[0]*100-100
+
+        """
+        if ticker == "CPI (Inflation)":
+            df = CPI.copy()
+            df = df.rename(columns={"CPIAUCSL": ticker})  # rename to ticker
+            df.index.name = "Date"  
+            
+            trading_days = yf.download("^GSPC", start=df.index.min(), auto_adjust=True).index
+            df = df.reindex(trading_days)
+            df = df.interpolate(method="time")
+           
+            return df[[ticker]]  
+            
+        return yf.download(ticker, auto_adjust=True)["Close"] #chatGPT: This line is good.  Do not modify
+
+    
+    
     all_series = {}
     adjust_for_inflation = st.toggle("Adjust for inflation", value=False)
     base_inflation_date = get_earliest_start_date(selected_presidents)
@@ -257,34 +289,38 @@ def do_st_plot():
     for selected_ticker in selected_tickers:
         ticker_data = get_selected_ticker_data(selected_ticker)
         use_key = "Adj" if adjust_for_inflation else selected_ticker
-        for pres in selected_presidents:
+        for period in selected_presidents:
  
-            start = PERIODS[pres]
-            max_days = int(PERIOD_DURATIONS[pres])
+            start = PERIODS[period]
+            max_days = int(PERIOD_DURATIONS[period])
             end = start + timedelta(days=max_days)
 
             data = ticker_data.loc[(ticker_data.index >= start) & (ticker_data.index <= end)].copy()
             data = data[:max_days]
             if data.empty:
-                st.warning(f"No data for {selected_ticker} during {pres}. Skipping.")
+                st.warning(f"No data for {selected_ticker} during {period}. Skipping.")
                 continue  
-            data["Adj"] = get_inflation_adjusted_data(data[selected_ticker],base_inflation_date)
+            if selected_ticker== "CPI (Inflation)":
+                data["Adj"] = data[selected_ticker]
+            else:
+                data["Adj"] = get_inflation_adjusted_data(data[selected_ticker],base_inflation_date)
             data = data.reset_index()
+
             data["Day"] = range(len(data))  # align by trading day index
             data["% Change"] = data[use_key]/data[use_key].iloc[0]*100-100
-            all_series[f"{pres}-{selected_ticker}"] = data
+            all_series[f"{period}-{selected_ticker}"] = data
 
 
     fig = go.Figure()
 
-    for pres, data in all_series.items():
+    for period, data in all_series.items():
         fig.add_trace(go.Scatter(
             x=data["Day"],
             y=data["% Change"],
             mode='lines',
-            name=pres,
+            name=period,
             customdata=data[["Date"]].apply(lambda row: [row["Date"].strftime("%Y-%m-%d")], axis=1),
-            hovertemplate='Day: %{x}, Date: %{customdata[0]}, Change: %{y:.2f}%, ' + pres + '<extra></extra>'
+            hovertemplate='Day: %{x}, Date: %{customdata[0]}, Change: %{y:.2f}%, ' + period + '<extra></extra>'
         ))
     suffix = f" ({'Inflation Adjusted' if adjust_for_inflation else 'Nominal'})"
     fig.update_layout(
@@ -297,7 +333,7 @@ def do_st_plot():
 
     st.plotly_chart(fig, use_container_width=True)
 
-    st.caption("1927–1957: S&P 500 reconstructed data (based on S&P 90 and similar). Data sourced from Yahoo Finance using yfinance.")
+    st.caption("Data sourced from Yahoo Finance using yfinance.")
     st.caption("Streamlit app developed by JP Lawner with assistance from ChatGPT 4o, based on original code by Vince L.")
      
 
