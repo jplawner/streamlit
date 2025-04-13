@@ -65,7 +65,7 @@ PERIODS = {
     "Black Thursday (10/24/1929)": datetime(1929, 10, 23),
     "Black Monday (10/19/1987)": datetime(1987, 10, 16), #Black Monday, the October 1987 stock market crash, was caused by a complex interplay of factors, including a strong bull market overdue for a correction, the rise of computer-driven trading, and portfolio insurance strategies. While no single event triggered the crash, these elements combined to create a chain reaction of panic selling that led to the largest one-day stock market decline in history.
 
-    "Peak of Dot Com Bubble (3/10/2020)":datetime(2020,3,10),
+    "Peak of Dot Com Bubble (3/10/2000)":datetime(2000,3,10),
 
     "Subprime Cracks Emerge (2/1/2007)":datetime(2007,2,1), #Academic/technical start of the crisis. HSBC announces major losses from U.S. subprime mortgages. First signs of stress in the housing market and mortgage-backed securities.
     "Liquidity Freeze (8/9/2007)":datetime(2007,8,9) ,#Widely seen as the moment the financial system began to seize. French bank BNP Paribas freezes 3 funds tied to U.S. mortgage markets.  ECB intervenes with liquidity injections.
