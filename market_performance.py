@@ -59,6 +59,13 @@ PERIODS = {
     #Notable Periods:
     "Black Thursday (10/24/1929)": datetime(1929, 10, 23),
     "Black Monday (10/19/1987)": datetime(1987, 10, 16), #Black Monday, the October 1987 stock market crash, was caused by a complex interplay of factors, including a strong bull market overdue for a correction, the rise of computer-driven trading, and portfolio insurance strategies. While no single event triggered the crash, these elements combined to create a chain reaction of panic selling that led to the largest one-day stock market decline in history.
+
+    "Peak of Dot Com Bubble (3/10/2020)":datetime(2020,3,10),
+
+    "Subprime Cracks Emerge (2/1/2007)":datetime(2007,2,1), #Academic/technical start of the crisis. HSBC announces major losses from U.S. subprime mortgages. First signs of stress in the housing market and mortgage-backed securities.
+    "Liquidity Freeze (8/9/2007)":datetime(2007,8,9) ,#Widely seen as the moment the financial system began to seize. French bank BNP Paribas freezes 3 funds tied to U.S. mortgage markets.  ECB intervenes with liquidity injections.
+    "Lehman Brothers Collapses (9/15/2008)":datetime(2008,9,15), ## Most cited public “crisis moment” — the start of full-scale panic and coordinated global response. Lehman Brothers files for bankruptcy. AIG is bailed out days later. Stock markets plunge and interbank lending freezes.
+    
     "Pandemic (2/19/2020)":datetime(2020,3,10),
     "Liberation Day (4/2/2025)": datetime(2025, 4, 2),
 }
@@ -87,9 +94,16 @@ PERIOD_DURATIONS = {
     "Herbert Hoover (1929)": (datetime(1933, 3, 4) - datetime(1929, 3, 4)).days,
 
     #Notable Periods:
-    "Black Thursday (10/24/1929)": 30,
-    "Black Monday (10/19/1987)": 30,
-    "Pandemic (2/19/2020)":30,
+    "Black Thursday (10/24/1929)": 100,
+    "Black Monday (10/19/1987)": 100,
+
+    "Peak of Dot Com Bubble (3/10/2020)": 100,
+
+    "Subprime Cracks Emerge (2/1/2007)":100,
+    "Liquidity Freeze (8/9/2007)":100,
+    "Lehman Brothers Collapses (9/15/2008)":100,
+
+    "Pandemic (2/19/2020)":100,
     "Liberation Day (4/2/2025)": (datetime.today() - datetime(2025, 4, 2)).days,
 }
 def download_and_cache_cpi(cache_path="cpi_cache.csv",expected_day_new_data = 15):
@@ -278,7 +292,7 @@ def do_st_plot():
         xaxis_title="Trading Days After Event",
         yaxis_title=f"% Change",
         hovermode='x unified',
-        legend_title="President"
+        legend_title="Period"
     )
 
     st.plotly_chart(fig, use_container_width=True)
